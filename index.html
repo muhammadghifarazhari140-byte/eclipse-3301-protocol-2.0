@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080b0d">
+<title>PROJECT ECLIPSE 3301 // ARCHIVE 50</title>
+<style>
+:root{--bg:#070a09;--panel:#0d1411;--line:#244b35;--green:#79ffa5;--muted:#789183;--white:#e8f1eb;--red:#ff7373;--gold:#e9d18b}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% 0%,#102319 0%,var(--bg) 58%);color:var(--white);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;min-height:100vh;padding:20px}
+main{max-width:780px;margin:0 auto}
+header,.panel{border:1px solid var(--line);background:rgba(11,17,14,.96);box-shadow:0 0 28px #0d331c35}
+header{padding:22px;margin-bottom:14px}
+.brand{display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--green);font-size:11px;letter-spacing:2px}
+h1{text-align:center;font-size:clamp(38px,10vw,66px);letter-spacing:.22em;color:var(--green);margin:23px 0 5px;text-shadow:0 0 22px #55ff9250}
+.subtitle{text-align:center;color:var(--muted);font-size:11px;letter-spacing:2px}
+.panel{padding:22px;margin-bottom:14px}
+.kicker{font-size:11px;letter-spacing:2px;color:var(--green)}
+h2{font-size:20px;margin:10px 0;color:white}
+p{line-height:1.75;color:#b9c9bf}
+.small{font-size:12px;color:var(--muted)}
+button,input{font:inherit}
+button{background:#10291b;border:1px solid #4e9c69;color:var(--green);padding:13px 16px;cursor:pointer}
+button:hover{background:#19432a}
+button:disabled{opacity:.35;cursor:not-allowed}
+.primary{width:100%;margin-top:12px}
+input{width:100%;padding:15px;background:#060907;border:1px solid #386347;color:var(--green);outline:none;margin:12px 0}
+input:focus{border-color:var(--green);box-shadow:0 0 0 2px #79ffa51c}
+.row{display:flex;gap:9px;flex-wrap:wrap}
+.row button{flex:1}
+.progress{height:7px;background:#17231b;margin:14px 0;overflow:hidden}
+.progress span{display:block;height:100%;width:0;background:var(--green);transition:width .3s}
+.meta{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:11px}
+.clue{border:1px dashed #41664c;background:#09100c;padding:16px;margin:16px 0;color:#d8e9dd;white-space:pre-wrap;line-height:1.8;overflow-wrap:anywhere}
+.feedback{min-height:24px;font-size:13px;color:var(--green);margin-top:12px}
+.error{color:var(--red)}
+.gold{color:var(--gold)}
+.hidden{display:none!important}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:13px}
+.levelbtn{padding:10px 3px;font-size:11px;min-height:39px}
+.levelbtn.done{background:#173b26;color:#b7ffcb;border-color:#4c9b65}
+.levelbtn.current{outline:2px solid var(--gold);color:var(--gold)}
+.levelbtn.locked{opacity:.3}
+footer{text-align:center;color:#405b49;font-size:10px;letter-spacing:1px;padding:22px}
+#ending{text-align:center;padding:34px 20px}
+#ending h2{font-size:clamp(28px,8vw,52px);color:var(--green);letter-spacing:4px}
+@media(max-width:430px){body{padding:11px}.panel{padding:16px}.grid{grid-template-columns:repeat(5,1fr)}}
+</style>
+</head>
+<body>
+<main>
+<header>
+ <div class="brand"><span>ECLIPSE NETWORK</span><span>ARCHIVE // 0050</span></div>
+ <h1>3301</h1>
+ <div class="subtitle">FIFTY LAYERS. ONE FINAL QUESTION.</div>
+</header>
+
+<section class="panel" id="intro">
+ <div class="kicker">[ CLASSIFIED TRANSMISSION ]</div>
+ <h2>THE ARCHIVE HAS BEEN REOPENED.</h2>
+ <p>Lima puluh lapisan menunggu. Setiap lapisan menguji cara berpikir yang berbeda: pola, bahasa, logika, matematika, sandi, dan pengamatan.</p>
+ <p class="small">Tidak ada batas waktu. Petunjuk tersedia, tetapi setiap penggunaan petunjuk mengurangi skor. Progres tersimpan di browser perangkat ini.</p>
+ <button class="primary" onclick="begin()">INITIALIZE ARCHIVE</button>
+</section>
+
+<section class="panel hidden" id="game">
+ <div class="meta"><span id="layer">LAYER 01 / 50</span><span id="score">HINTS USED: 0</span></div>
+ <div class="progress"><span id="bar"></span></div>
+ <div class="kicker" id="category">PATTERN ANALYSIS</div>
+ <h2 id="title"></h2>
+ <p id="question"></p>
+ <div class="clue" id="clue"></div>
+ <label class="small" for="answer">SUBMIT YOUR ANSWER</label>
+ <input id="answer" autocomplete="off" placeholder="TYPE ANSWER..." />
+ <div class="row">
+  <button onclick="checkAnswer()">VERIFY</button>
+  <button onclick="showHint()">REQUEST HINT</button>
+  <button onclick="showMap()">ARCHIVE MAP</button>
+ </div>
+ <div class="feedback" id="feedback" aria-live="polite"></div>
+ <p class="small" id="hintbox"></p>
+</section>
+
+<section class="panel hidden" id="map">
+ <div class="kicker">[ ARCHIVE INDEX ]</div>
+ <h2>FIFTY LAYERS</h2>
+ <p class="small">Lapisan yang sudah diselesaikan dapat dibuka kembali. Lapisan berikutnya terbuka setelah jawaban benar.</p>
+ <div class="grid" id="levelgrid"></div>
+ <button class="primary" onclick="closeMap()">RETURN TO PUZZLE</button>
+</section>
+
+<section class="panel hidden" id="ending">
+ <div class="kicker">[ ACCESS GRANTED // 50 OF 50 ]</div>
+ <h2>THE ECLIPSE IS NOT THE END.</h2>
+ <p>YOU FOLLOWED THE SIGNAL.<br>YOU QUESTIONED THE PATTERN.<br>YOU OPENED THE ARCHIVE.</p>
+ <div class="clue gold">THE LAST SECRET WAS THIS:\nA good question can be more powerful than a perfect answer.</div>
+ <p class="small">PROJECT ECLIPSE 3301 // ARCHIVE COMPLETE</p>
+ <button class="primary" onclick="resetProgress()">RESET ARCHIVE</button>
+</section>
+<footer>UNKNOWN ORIGIN // FICTIONAL PUZZLE EXPERIENCE // 3301</footer>
+</main>
+
+<script>
+const puzzles = [
+{cat:"PATTERN",title:"THE FIRST SEQUENCE",q:"Lengkapi deret berikut. Temukan operasi yang sama pada setiap langkah.",clue:"3, 8, 15, 24, 35, ?",hint:"Selisih antarangka bertambah 2 setiap kali.",a:["48"]},
+{cat:"NUMBER THEORY",title:"PRIME SIGNAL",q:"Angka berikut mengikuti pola bilangan prima. Apa angka selanjutnya?",clue:"2, 3, 5, 7, 11, 13, ?",hint:"Bilangan prima hanya memiliki dua faktor positif.",a:["17"]},
+{cat:"LOGIC",title:"THE THREE SWITCHES",q:"Ada tiga sakelar bernomor 1, 2, 3. Hanya satu yang benar. Pernyataan mana yang menentukan sakelar benar?\n\n1: 'Sakelar 2 benar.'\n2: 'Sakelar 3 salah.'\n3: 'Sakelar 1 dan 2 salah.'\n\nTepat satu pernyataan benar. Masukkan nomor sakelar yang benar.",clue:"Uji satu per satu kemungkinan sakelar yang benar.",hint:"Jika sakelar 1 benar, pernyataan 1 dan 2 sama-sama benar. Coba kemungkinan lain.",a:["2"]},
+{cat:"CAESAR",title:"SHIFTED MESSAGE",q:"Dekripsi pesan Caesar dengan pergeseran 3 huruf ke belakang.",clue:"WKH NHB LV XQGHU WKH VWRQH",hint:"W menjadi T, K menjadi H, dan seterusnya.",a:["THE KEY IS UNDER THE STONE"]},
+{cat:"OBSERVATION",title:"MISSING LETTER",q:"Satu huruf hilang dari pola alfabet ini. Temukan hurufnya.",clue:"A, C, F, J, O, ?",hint:"Jaraknya bertambah satu: +2, +3, +4, +5.",a:["U"]},
+{cat:"MATH",title:"SQUARE ROOT",q:"Temukan bilangan bulat positif yang kuadratnya sama dengan 2025.",clue:"x² = 2025",hint:"Coba 40², lalu 45².",a:["45"]},
+{cat:"MORSE",title:"SILENT DOTS",q:"Terjemahkan kode Morse berikut.",clue:"-.-. --- -.. .",hint:"Pisahkan setiap kelompok simbol sebagai satu huruf.",a:["CODE"]},
+{cat:"ATBASH",title:"THE MIRROR ALPHABET",q:"Gunakan sandi Atbash: A↔Z, B↔Y, C↔X, dan seterusnya.",clue:"V O R L W",hint:"Huruf pertama menjadi huruf terakhir.",a:["EL I D"]},
+{cat:"NUMBER PATTERN",title:"DOUBLE OR NOTHING",q:"Apa angka selanjutnya?",clue:"5, 10, 20, 40, 80, ?",hint:"Setiap angka dikali dua.",a:["160"]},
+{cat:"WORDPLAY",title:"THE ODD ONE",q:"Manakah yang tidak termasuk kelompok? Jawab dengan satu kata.",clue:"MERAH — BIRU — HIJAU — MEJA — KUNING",hint:"Empat adalah warna; satu bukan.",a:["MEJA"]},
+{cat:"BINARY",title:"TWO STATES",q:"Ubah bilangan biner 01000001 menjadi karakter ASCII.",clue:"01000001",hint:"Nilainya 65 dalam desimal.",a:["A","65"]},
+{cat:"LOGIC",title:"THE HONEST BOX",q:"Ada tiga kotak. Tepat satu berisi kunci.\nKotak A: 'Kunci tidak ada di B.'\nKotak B: 'Kunci ada di sini.'\nKotak C: 'Kunci tidak ada di sini.'\nHanya satu tulisan yang benar. Di kotak mana kunci berada?",clue:"Anggap kunci berada di A, lalu B, lalu C. Hitung pernyataan benar.",hint:"Jika kunci di A: tulisan A benar, B salah, C benar. Jadi bukan A.",a:["B"]},
+{cat:"SEQUENCE",title:"FIBONACCI ECHO",q:"Temukan angka berikutnya.",clue:"1, 1, 2, 3, 5, 8, 13, ?",hint:"Jumlahkan dua angka sebelumnya.",a:["21"]},
+{cat:"CAESAR",title:"BACK THREE",q:"Dekripsi Caesar dengan menggeser setiap huruf 3 langkah ke belakang.",clue:"EFOXH",hint:"E menjadi B.",a:["BCLUB","BCLUE"]},
+{cat:"MATH",title:"TRIANGULAR NUMBER",q:"Berapa hasil 1 + 2 + 3 + ... + 20?",clue:"Jumlah 20 bilangan bulat positif pertama.",hint:"Gunakan rumus n(n+1)/2.",a:["210"]},
+{cat:"ANAGRAM",title:"SCRAMBLED ARCHIVE",q:"Susun ulang huruf berikut menjadi kata bahasa Inggris yang berkaitan dengan teka-teki.",clue:"D O C E",hint:"Kata ini berarti sandi atau sistem simbol.",a:["CODE"]},
+{cat:"PATTERN",title:"GROWING GAP",q:"Lengkapi deret.",clue:"4, 9, 19, 39, 79, ?",hint:"Kalikan dua lalu tambah satu.",a:["159"]},
+{cat:"CLOCK",title:"TIME FRACTION",q:"Pukul 3:15. Berapa derajat sudut terkecil antara jarum jam dan menit?",clue:"Jarum menit di 90°. Jarum jam bergerak 0,5° per menit.",hint:"Jarum jam pada 3:15 berada di 97,5°.",a:["7.5","7,5"]},
+{cat:"MORSE",title:"THREE SIGNALS",q:"Terjemahkan kode Morse.",clue:"... --- ...",hint:"Ini sinyal internasional tiga huruf.",a:["SOS"]},
+{cat:"NUMBER THEORY",title:"COMMON DIVISOR",q:"Berapa FPB dari 84 dan 126?",clue:"Cari faktor terbesar yang membagi kedua angka.",hint:"84 = 2² × 3 × 7; 126 = 2 × 3² × 7.",a:["42"]},
+{cat:"OBSERVATION",title:"REVERSE ORDER",q:"Balik urutan karakter berikut, termasuk tanda baca.",clue:"ECLIPSE!",hint:"Mulai dari tanda seru.",a:["!ESPILCE"]},
+{cat:"BINARY",title:"BINARY WORD",q:"Ubah kode ASCII biner ini menjadi tiga huruf.",clue:"01000011 01000001 01010100",hint:"Setiap kelompok 8 bit adalah satu karakter.",a:["CAT"]},
+{cat:"LOGIC",title:"FAMILY COUNT",q:"Dua ayah dan dua anak pergi memancing. Mereka menangkap tiga ikan dan masing-masing membawa pulang satu ikan. Bagaimana mungkin?",clue:"Semua orang mendapat satu ikan. Berapa jumlah orang sebenarnya?",hint:"Hubungan keluarga dapat bertumpuk: ayah, anak, dan cucu.",a:["3 ORANG","3"]},
+{cat:"PATTERN",title:"ALTERNATING STEPS",q:"Temukan angka berikutnya.",clue:"2, 5, 4, 7, 6, 9, ?",hint:"Pola bergantian +3, -1.",a:["8"]},
+{cat:"CRYPTIC",title:"LETTER VALUE",q:"Jika A=1, B=2, ..., Z=26, hitung nilai kata ECLIPSE.",clue:"E + C + L + I + P + S + E",hint:"Jumlahkan nilai posisi alfabet setiap huruf.",a:["59"]},
+{cat:"MATH",title:"FACTORIAL",q:"Hitung 5 faktorial.",clue:"5! = 5 × 4 × 3 × 2 × 1",hint:"Kalikan semua bilangan bulat positif dari 1 sampai 5.",a:["120"]},
+{cat:"ATBASH",title:"REFLECTED WORD",q:"Dekripsi menggunakan Atbash.",clue:"GSV",hint:"G↔T, S↔H, V↔E.",a:["THE"]},
+{cat:"GEOMETRY",title:"FOUR CORNERS",q:"Sebuah persegi memiliki keliling 64 cm. Berapa luasnya?",clue:"Semua sisinya sama panjang.",hint:"Sisi = keliling ÷ 4. Luas = sisi × sisi.",a:["256","256 CM2","256 CM²"]},
+{cat:"SEQUENCE",title:"CUBIC GROWTH",q:"Lengkapi deret kubik sempurna.",clue:"1, 8, 27, 64, 125, ?",hint:"1³, 2³, 3³, 4³, 5³, ...",a:["216"]},
+{cat:"WORDPLAY",title:"HIDDEN WORD",q:"Temukan nama hewan yang tersembunyi secara berurutan dalam kalimat ini. Jawab dalam bahasa Inggris.",clue:"The cAT ATe quietly.",hint:"Perhatikan huruf yang saling bersambung di tengah kata.",a:["CAT"]},
+{cat:"LOGIC",title:"THE BRIDGE",q:"Empat orang menyeberangi jembatan malam hari dengan satu senter. Waktu mereka 1, 2, 7, dan 10 menit. Maksimal dua orang sekaligus dan senter harus dibawa. Berapa waktu minimum agar semua menyeberang?",clue:"Orang tercepat dapat mengantar senter kembali. Cari strategi yang mengurangi perjalanan orang paling lambat.",hint:"Strategi optimal: 1&2 menyeberang, 1 kembali, 7&10 menyeberang, 2 kembali, 1&2 menyeberang.",a:["17","17 MENIT"]},
+{cat:"NUMBER THEORY",title:"REMAINDER",q:"Bilangan positif terkecil yang jika dibagi 5 bersisa 2 dan dibagi 3 bersisa 2 adalah?",clue:"Cari x terkecil dengan x ≡ 2 (mod 5) dan x ≡ 2 (mod 3).",hint:"Angka itu 2 lebih besar dari kelipatan 15.",a:["2"]},
+{cat:"PATTERN",title:"THE HIDDEN MULTIPLIER",q:"Temukan angka berikutnya.",clue:"2, 12, 36, 80, 150, ?",hint:"Setiap suku adalah n² × (n+1), mulai n=1.",a:["252"]},
+{cat:"MATH",title:"DIGIT SUM",q:"Berapa jumlah seluruh digit dari 987654321?",clue:"9+8+7+6+5+4+3+2+1",hint:"Pasangkan 9+1, 8+2, dan seterusnya.",a:["45"]},
+{cat:"LANGUAGE",title:"VOWELLESS",q:"Tambahkan huruf vokal agar rangkaian konsonan ini menjadi kata bahasa Inggris yang berarti 'kekuatan'.",clue:"STRNGTH",hint:"Kata ini terdiri dari 8 huruf.",a:["STRENGTH"]},
+{cat:"MATRIX",title:"GRID LOGIC",q:"Lengkapi angka yang hilang.",clue:"2   4   8\n3   6   12\n5   10  ?",hint:"Setiap baris: angka kedua dua kali angka pertama; angka ketiga dua kali angka kedua.",a:["20"]},
+{cat:"CAESAR",title:"SHIFT UNKNOWN",q:"Pesan dienkripsi dengan Caesar. Petunjuk: geser mundur 1 huruf.",clue:"Uif epps jt pqfo",hint:"U menjadi T, i menjadi h. Pertahankan spasi.",a:["THE DOOR IS OPEN"]},
+{cat:"LOGIC",title:"THE AGE RIDDLE",q:"Seorang anak berusia 10 tahun. Kakaknya dua kali lebih tua. Berapa usia kakaknya ketika anak itu berusia 15 tahun?",clue:"Selisih usia mereka tetap.",hint:"Kakak sekarang berusia 20 tahun.",a:["25"]},
+{cat:"MATH",title:"POWER OF TWO",q:"Berapa nilai 2 pangkat 10?",clue:"2¹⁰",hint:"2⁵ = 32. Kuadratkan hasilnya.",a:["1024"]},
+{cat:"OBSERVATION",title:"ALPHABET INDEX",q:"Ubah angka menjadi huruf dengan A=1 sampai Z=26.",clue:"3 - 18 - 25 - 16 - 20 - 9 - 3",hint:"Baca setiap angka sebagai posisi alfabet.",a:["CRYPTIC"]},
+{cat:"SEQUENCE",title:"PRIME GAP",q:"Temukan angka berikutnya.",clue:"1, 2, 4, 7, 11, 16, ?",hint:"Selisihnya +1, +2, +3, +4, +5.",a:["22"]},
+{cat:"LOGIC",title:"THE TWO DOORS",q:"Ada dua pintu. Satu menuju jalan keluar, satu menuju jalan buntu. Dua penjaga: satu selalu jujur, satu selalu berbohong. Kamu boleh bertanya satu pertanyaan kepada satu penjaga. Apa yang harus ditanyakan? Jawab dengan inti pertanyaannya.",clue:"Tanyakan pintu mana yang akan ditunjuk penjaga lain sebagai jalan keluar, lalu pilih pintu sebaliknya.",hint:"Jawaban yang diharapkan: 'Pintu mana yang akan ditunjuk penjaga lain?'",a:["PINTU MANA YANG AKAN DITUNJUK PENJAGA LAIN","PINTU MANA YANG AKAN DITUNJUK PENJAGA LAIN SEBAGAI JALAN KELUAR"]},
+{cat:"CRYPTO",title:"HEX SIGNAL",q:"Ubah bilangan heksadesimal 4A menjadi desimal.",clue:"4A₁₆",hint:"4×16 + 10.",a:["74"]},
+{cat:"PATTERN",title:"MIRRORED NUMBERS",q:"Temukan angka berikutnya.",clue:"11, 22, 33, 44, ?",hint:"Digit puluhan dan satuan sama, naik satu.",a:["55"]},
+{cat:"MATH",title:"THE LAST FACTOR",q:"Berapa banyak faktor positif dari 36?",clue:"Daftar semua pembagi positif 36.",hint:"Pasangan faktor: (1,36), (2,18), (3,12), (4,9), (6,6).",a:["9"]},
+{cat:"LANGUAGE",title:"ANAGRAM II",q:"Susun huruf menjadi kata bahasa Inggris yang berarti 'diam'.",clue:"L I S E N T",hint:"Enam huruf. Bukan 'listen' sebagai kata kerja.",a:["SILENT"]},
+{cat:"LOGIC",title:"THE LIGHTS",q:"Di luar ruangan ada tiga tombol. Di dalam ruangan tertutup ada satu lampu pijar. Kamu boleh memainkan tombol sesukamu, tetapi hanya boleh masuk ruangan sekali. Bagaimana mengetahui tombol yang terhubung ke lampu?",clue:"Gunakan bukan hanya cahaya, tetapi juga panas lampu.",hint:"Nyalakan satu tombol beberapa menit, matikan, nyalakan tombol kedua, lalu masuk.",a:["PANAS DAN MENYALA","PANAS"]},
+{cat:"NUMBER THEORY",title:"LEAST COMMON MULTIPLE",q:"Berapa KPK dari 12, 18, dan 30?",clue:"Cari kelipatan persekutuan terkecil.",hint:"Faktorisasi prima: 12=2²×3; 18=2×3²; 30=2×3×5.",a:["180"]},
+{cat:"META",title:"THE ARCHIVE KEY",q:"Ambil huruf pertama dari judul 5 level pertama, lalu baca berurutan. Apa hasilnya?",clue:"THE FIRST SEQUENCE / PRIME SIGNAL / THE THREE SWITCHES / SHIFTED MESSAGE / MISSING LETTER",hint:"Ambil huruf pertama dari setiap judul, bukan dari pertanyaannya.",a:["TPTSM"]},
+{cat:"FINAL",title:"THE LAST QUESTION",q:"Kamu telah melewati 49 lapisan. Jawab pertanyaan terakhir dengan satu kata: apa yang membuat semua teka-teki ini dapat dipecahkan?",clue:"Bukan keberuntungan. Bukan kekuatan. Sesuatu yang kamu gunakan untuk menguji petunjuk, pola, dan asumsi.",hint:"Sikap untuk tidak langsung menerima sesuatu sebagai benar.",a:["CURIOSITY","KEINGINTAHUAN"]}
+];
+
+let current=0, completed=0, hints=0;
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem("eclipse50",JSON.stringify({current,completed,hints}));}
+function restore(){try{const s=JSON.parse(localStorage.getItem("eclipse50"));if(s){current=Math.min(s.current||0,49);completed=Math.min(s.completed||0,50);hints=s.hints||0;}}catch(e){}}
+function begin(){$("intro").classList.add("hidden");$("game").classList.remove("hidden");render();}
+function render(){
+ const p=puzzles[current];$("layer").textContent=`LAYER ${String(current+1).padStart(2,"0")} / 50`;
+ $("score").textContent=`HINTS USED: ${hints}`;$("bar").style.width=(completed/50*100)+"%";
+ $("category").textContent=p.cat+" // ANALYSIS";$("title").textContent=p.title;
+ $("question").textContent=p.q;$("clue").textContent=p.clue;$("answer").value="";
+ $("feedback").textContent="";$("feedback").className="feedback";$("hintbox").textContent="";
+ save();
+}
+function normalize(s){return s.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[.,!?;:'"“”‘’]/g,"").replace(/\s+/g," ").trim();}
+function checkAnswer(){
+ const value=normalize($("answer").value),p=puzzles[current];
+ if(p.a.some(x=>normalize(x)===value)){
+  if(current>=completed)completed=current+1;
+  $("feedback").textContent="ACCESS GRANTED // LAYER DECRYPTED.";
+  $("feedback").className="feedback";
+  save();setTimeout(()=>{
+   if(completed===50){$("game").classList.add("hidden");$("ending").classList.remove("hidden");}
+   else{current=completed;render();}
+  },850);
+ }else{$("feedback").textContent="ACCESS DENIED // THE PATTERN DOES NOT MATCH."; $("feedback").className="feedback error";}
+}
+function showHint(){$("hintbox").textContent="HINT: "+puzzles[current].hint;hints++;$("score").textContent=`HINTS USED: ${hints}`;save();}
+function showMap(){
+ $("game").classList.add("hidden");$("map").classList.remove("hidden");
+ $("levelgrid").innerHTML="";
+ for(let i=0;i<50;i++){
+  const b=document.createElement("button");b.className="levelbtn";
+  if(i<completed){b.classList.add("done");b.textContent="✓ "+(i+1);}
+  else if(i===completed){b.classList.add("current");b.textContent="▶ "+(i+1);}
+  else{b.classList.add("locked");b.textContent="🔒";}
+  if(i<completed||i===completed){b.onclick=()=>{current=i;closeMap();};}
+  $("levelgrid").appendChild(b);
+ }
+}
+function closeMap(){$("map").classList.add("hidden");$("game").classList.remove("hidden");render();}
+function resetProgress(){if(confirm("Hapus seluruh progres 50 level di perangkat ini?")){localStorage.removeItem("eclipse50");current=0;completed=0;hints=0;$("ending").classList.add("hidden");$("intro").classList.remove("hidden");}}
+restore();
+if(completed===50){$("intro").classList.add("hidden");$("ending").classList.remove("hidden");}
+$("answer").addEventListener("keydown",e=>{if(e.key==="Enter")checkAnswer();});
+</script>
+</body>
+</html>
